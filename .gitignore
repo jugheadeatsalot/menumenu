@@ -1,0 +1,13 @@
+# Logs
+*.log*
+
+# Deps
+node_modules/
+
+# IDEs
+.idea/
+.vscode/
+
+# Etcetera
+.zip
+*.env

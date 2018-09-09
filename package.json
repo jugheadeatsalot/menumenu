@@ -1,0 +1,31 @@
+{
+  "name": "menumenu",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "John Romeral",
+  "license": "MIT",
+  "repository": "git+https://github.com:jugheadeatsalot/menumenu.git",
+  "scripts": {
+    "start": "concurrently \"rollup --watch -c\" \"gulp\""
+  },
+  "devDependencies": {
+    "babel-core": "6",
+    "babel-plugin-external-helpers": "^6.22.0",
+    "babel-preset-env": "^1.7.0",
+    "concurrently": "^4.0.1",
+    "dominoob": "^0.1.0",
+    "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^3.1.1",
+    "gulp-clean-css": "^2.3.2",
+    "gulp-filter": "^5.0.1",
+    "gulp-rename": "^1.2.2",
+    "gulp-sass": "^2.3.2",
+    "gulp-sourcemaps": "^1.9.1",
+    "rollup": "^0.65.2",
+    "rollup-plugin-babel": "3",
+    "rollup-plugin-commonjs": "^9.1.6",
+    "rollup-plugin-node-resolve": "^3.4.0",
+    "rollup-plugin-uglify": "^5.0.2",
+    "run-sequence": "^1.2.2"
+  }
+}
