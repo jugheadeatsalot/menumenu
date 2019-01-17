@@ -4,6 +4,7 @@
 
 .dropdown-toggle.generated:before {
   content: '\21d3';
+  font-size: .8em;
 }
 
 .menumenu {
@@ -53,7 +54,7 @@
 }
 
 .menumenu .sub-menu-out {
-  animation: SubMenuOut 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+  animation: SubMenuOut 0.4s cubic-bezier(0.77, 0, 0.175, 1);
 }
 
 @keyframes SubMenuIn {

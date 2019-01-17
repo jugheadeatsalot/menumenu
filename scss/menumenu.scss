@@ -7,14 +7,13 @@
 
     &.generated:before {
         content:'\21d3';
+        font-size:.8em;
     }
 }
 
 $hidden-offset:6000px;
 $sub-menu-in:'.sub-menu-in';
 $sub-menu-out:'.sub-menu-out';
-$sub-menu-hidden:'.sub-menu-hidden';
-$sub-menu-shown:'.sub-menu-shown';
 
 .menumenu {
     @include ul-styles();
@@ -30,7 +29,6 @@ $sub-menu-shown:'.sub-menu-shown';
         top:100%;
         z-index:9999;
         width:240px;
-        //transform:translate(0, 0);
 
         ul {
             top:0;
@@ -42,12 +40,10 @@ $sub-menu-shown:'.sub-menu-shown';
 
         > ul {
             left:-$hidden-offset;
-            //transform:translate(-$hidden-offset, -$hidden-offset);
 
             &#{$sub-menu-in},
             &#{$sub-menu-out} {
                 left:0;
-                //transform:translate(0, 0);
             }
         }
     }
@@ -55,11 +51,9 @@ $sub-menu-shown:'.sub-menu-shown';
     #{$sub-menu-in},
     #{$sub-menu-out} {
         left:$hidden-offset;
-        //transform:translate($hidden-offset, $hidden-offset);
 
         ul {
             left:-$hidden-offset;
-            //transform:translate(-$hidden-offset, -$hidden-offset);
         }
     }
 
@@ -68,17 +62,17 @@ $sub-menu-shown:'.sub-menu-shown';
     }
 
     #{$sub-menu-out} {
-        animation:SubMenuOut .5s cubic-bezier(0.77, 0, 0.175, 1);
+        animation:SubMenuOut .4s cubic-bezier(0.77, 0, 0.175, 1);
     }
 }
 
-$offset:10px;
-$scale:1.2;
+$y-offset:10px;
+$scale:1.05;
 
 @keyframes SubMenuIn {
     0% {
         opacity:0;
-        transform:translate(0, $offset);
+        transform:translate(0, $y-offset);
     }
 
     100% {
@@ -95,6 +89,6 @@ $scale:1.2;
 
     100% {
         opacity:0;
-        transform:translate(0, $offset);
+        transform:translate(0, $y-offset);
     }
 }
