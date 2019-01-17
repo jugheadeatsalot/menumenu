@@ -71,13 +71,13 @@ var menumenu = (function (_d) {
             var targetSubMenuSelector = 'ul[data-id="' + dropdownToggle.dataset.id + '"]';
             var targetSubMenu = menu.querySelector(targetSubMenuSelector);
 
-            dropdownToggle.addEventListener('click', function (event) {
+            _d.on(dropdownToggle, 'click', function (event) {
                 event.preventDefault();
 
                 var currentSubMenu = menu.querySelector('.' + opts.classSubMenuShown);
 
                 if (currentSubMenu) {
-                    if (this.dataset.depth === '0' && backLinkClicked === false) {
+                    if (dropdownToggle.dataset.depth === '0' && backLinkClicked === false) {
                         hideSubMenu(currentSubMenu, showMenu);
                     } else {
                         hideSubMenu(currentSubMenu, function () {
@@ -101,12 +101,12 @@ var menumenu = (function (_d) {
 
             backLink.dataset.id = grandparent ? grandparent.id : 'none';
 
-            backLink.addEventListener('click', function (event) {
+            _d.on(backLink, 'click', function (event) {
                 event.preventDefault();
 
                 var currentSubMenu = menu.querySelector('.' + opts.classSubMenuShown);
 
-                if (this.dataset.id === 'none') {
+                if (backLink.dataset.id === 'none') {
                     hideSubMenu(currentSubMenu, showMenu);
                 } else {
                     var targetDropdownToggleSelector = '.' + opts.classDropdownToggle + '[data-id="' + backLink.dataset.id + '"]';
@@ -135,9 +135,9 @@ var menumenu = (function (_d) {
         var showSubMenu = function showSubMenu(targetSubMenu) {
             _d.addClasses(targetSubMenu, opts.classSubMenuIn);
 
-            targetSubMenu.addEventListener(animationEnd, function () {
-                _d.removeClasses(this, opts.classSubMenuHidden);
-                _d.addClasses(this, opts.classSubMenuShown);
+            _d.on(targetSubMenu, animationEnd, function () {
+                _d.removeClasses(targetSubMenu, opts.classSubMenuHidden);
+                _d.addClasses(targetSubMenu, opts.classSubMenuShown);
             }, { once: true });
         };
 
@@ -145,10 +145,10 @@ var menumenu = (function (_d) {
             _d.addClasses(currentSubMenu, opts.classSubMenuOut);
             _d.removeClasses(currentSubMenu, opts.classSubMenuIn);
 
-            currentSubMenu.addEventListener(animationEnd, function () {
-                _d.addClasses(this, opts.classSubMenuHidden);
-                _d.removeClasses(this, opts.classSubMenuShown);
-                _d.removeClasses(this, opts.classSubMenuOut);
+            _d.on(currentSubMenu, animationEnd, function () {
+                _d.addClasses(currentSubMenu, opts.classSubMenuHidden);
+                _d.removeClasses(currentSubMenu, opts.classSubMenuShown);
+                _d.removeClasses(currentSubMenu, opts.classSubMenuOut);
 
                 if (typeof callback === 'function') callback.call(_this);
             }, { once: true });

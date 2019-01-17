@@ -89,6 +89,12 @@ function merge(object1, object2) {
     return object1;
 }
 
+function on(element, events, listener, options) {
+    events.split(' ').forEach(function (event) {
+        element.addEventListener(event, listener, options);
+    });
+}
+
 function removeClasses(element, classes) {
     var elClasses = element.className.trim();
     var elClassesArray = elClasses ? elClasses.split(' ') : [];
@@ -166,13 +172,13 @@ function menumenu(selector, opts) {
         var targetSubMenuSelector = 'ul[data-id="' + dropdownToggle.dataset.id + '"]';
         var targetSubMenu = menu.querySelector(targetSubMenuSelector);
 
-        dropdownToggle.addEventListener('click', function (event) {
+        on(dropdownToggle, 'click', function (event) {
             event.preventDefault();
 
             var currentSubMenu = menu.querySelector('.' + opts.classSubMenuShown);
 
             if (currentSubMenu) {
-                if (this.dataset.depth === '0' && backLinkClicked === false) {
+                if (dropdownToggle.dataset.depth === '0' && backLinkClicked === false) {
                     hideSubMenu(currentSubMenu, showMenu);
                 } else {
                     hideSubMenu(currentSubMenu, function () {
@@ -196,12 +202,12 @@ function menumenu(selector, opts) {
 
         backLink.dataset.id = grandparent ? grandparent.id : 'none';
 
-        backLink.addEventListener('click', function (event) {
+        on(backLink, 'click', function (event) {
             event.preventDefault();
 
             var currentSubMenu = menu.querySelector('.' + opts.classSubMenuShown);
 
-            if (this.dataset.id === 'none') {
+            if (backLink.dataset.id === 'none') {
                 hideSubMenu(currentSubMenu, showMenu);
             } else {
                 var targetDropdownToggleSelector = '.' + opts.classDropdownToggle + '[data-id="' + backLink.dataset.id + '"]';
@@ -230,9 +236,9 @@ function menumenu(selector, opts) {
     var showSubMenu = function showSubMenu(targetSubMenu) {
         addClasses(targetSubMenu, opts.classSubMenuIn);
 
-        targetSubMenu.addEventListener(animationEnd, function () {
-            removeClasses(this, opts.classSubMenuHidden);
-            addClasses(this, opts.classSubMenuShown);
+        on(targetSubMenu, animationEnd, function () {
+            removeClasses(targetSubMenu, opts.classSubMenuHidden);
+            addClasses(targetSubMenu, opts.classSubMenuShown);
         }, { once: true });
     };
 
@@ -240,10 +246,10 @@ function menumenu(selector, opts) {
         addClasses(currentSubMenu, opts.classSubMenuOut);
         removeClasses(currentSubMenu, opts.classSubMenuIn);
 
-        currentSubMenu.addEventListener(animationEnd, function () {
-            addClasses(this, opts.classSubMenuHidden);
-            removeClasses(this, opts.classSubMenuShown);
-            removeClasses(this, opts.classSubMenuOut);
+        on(currentSubMenu, animationEnd, function () {
+            addClasses(currentSubMenu, opts.classSubMenuHidden);
+            removeClasses(currentSubMenu, opts.classSubMenuShown);
+            removeClasses(currentSubMenu, opts.classSubMenuOut);
 
             if (typeof callback === 'function') callback.call(_this);
         }, { once: true });
