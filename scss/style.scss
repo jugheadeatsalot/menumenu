@@ -1,90 +1,49 @@
-@mixin ul-styles() {
-    list-style-type:none;
-    padding-left:0;
+body {
+    margin:0;
+    padding:40px;
 }
-
-.dropdown-toggle:before {
-    content:'>';
-}
-
-$hidden-offset:6000px;
-$sub-menu-in:'.sub-menu-in';
-$sub-menu-out:'.sub-menu-out';
 
 .menumenu {
-    @include ul-styles();
-
-    display:flex;
+    padding-left:0;
 
     ul {
-        @include ul-styles();
+        background:#ffffff;
+        border-radius:.4em;
+        padding:14px;
+        box-shadow:0 2px 14px 0 rgba(0, 0, 0, 0.5);
 
-        position:absolute;
+        &:before {
+            content:'';
+            box-shadow:0 0 4px 0 rgba(0, 0, 0, 0.3);
+            position:absolute;
+            top:-5px;
+            left:28px;
+            width:10px;
+            height:10px;
+            background-color:#ffffff;
+            transform:rotate(45deg);
+        }
 
-        ul {
+        &:after {
+            content:'';
+            position:absolute;
             top:0;
+            left:15px;
+            width:30px;
+            height:10px;
+            background-color:#ffffff;
         }
     }
 
     > li {
-        position:relative;
-
         &:not(:last-child) {
             margin-right:14px;
         }
 
         > ul {
-            left:-$hidden-offset;
-
-            &#{$sub-menu-in},
-            &#{$sub-menu-out} {
-                left:0 !important;
-            }
+            display:none;
+            margin-top:12px;
+            margin-left:-14px;
         }
-
-        ul {
-            width:240px;
-        }
-    }
-}
-
-#{$sub-menu-in},
-#{$sub-menu-out} {
-    left:$hidden-offset !important;
-
-    ul {
-        display:none;
-    }
-}
-
-#{$sub-menu-in} {
-    animation:SubMenuIn .5s cubic-bezier(0.77, 0, 0.175, 1);
-}
-
-#{$sub-menu-out} {
-    animation:SubMenuOut .4s cubic-bezier(0.77, 0, 0.175, 1);
-}
-
-$translate-y-offset:10px;
-
-@keyframes SubMenuIn {
-    0% {
-        opacity:0;
-        transform:translateY($translate-y-offset);
-    }
-    100% {
-        opacity:1;
-        transform:translateY(0);
-    }
-}
-
-@keyframes SubMenuOut {
-    0% {
-        opacity:1;
-        transform:translateY(0);
-    }
-    100% {
-        opacity:0;
-        transform:translateY($translate-y-offset);
     }
 }

@@ -110,33 +110,34 @@ function menumenu(selector, opts) {
         classBackLink: 'back-link',
         classDropdownToggle: 'dropdown-toggle',
         classHasChildren: 'has-children',
-        classMenu: 'menumenu',
         classMenuHidden: 'menu-hidden',
-        classMenuIn: 'menu-in',
-        classMenuOut: 'menu-out',
         classSubMenu: 'sub-menu',
-        classSubMenuIn: 'sub-menu-in',
-        classSubMenuOut: 'sub-menu-out',
-        classSubMenuShown: 'sub-menu-shown',
         idMenu: 'menumenu',
         msgBack: 'Back'
     };
 
     opts = merge(defaults, opts);
 
+    opts.classMenuIn = 'menu-in';
+    opts.classMenuOut = 'menu-out';
+    opts.classSubMenuIn = 'sub-menu-in';
+    opts.classSubMenuOut = 'sub-menu-out';
+    opts.classSubMenuHidden = 'sub-menu-hidden';
+    opts.classSubMenuShown = 'sub-menu-shown';
+
     if (!menu.id) menu.id = opts.idMenu;
 
-    addClasses(menu, opts.classMenu);
+    addClasses(menu, 'menumenu');
 
     forEach(menuItems, function (menuItem, index) {
         if (!menuItem.id) menuItem.id = menu.id + '-item-' + (index + 1);
     });
 
     forEach(subMenus, function (subMenu) {
-        addClasses(subMenu, opts.classSubMenu);
+        addClasses(subMenu, opts.classSubMenu + ' ' + opts.classSubMenuHidden);
 
         if (opts.addDropdownToggle) {
-            var dropdownToggleHTML = '<span class="' + opts.classDropdownToggle + '"></span>';
+            var dropdownToggleHTML = '<span class="' + opts.classDropdownToggle + ' generated"></span>';
 
             subMenu.insertAdjacentHTML('beforebegin', dropdownToggleHTML);
         }
@@ -230,6 +231,7 @@ function menumenu(selector, opts) {
         addClasses(targetSubMenu, opts.classSubMenuIn);
 
         targetSubMenu.addEventListener(animationEnd, function () {
+            removeClasses(this, opts.classSubMenuHidden);
             addClasses(this, opts.classSubMenuShown);
         }, { once: true });
     };
@@ -239,6 +241,7 @@ function menumenu(selector, opts) {
         removeClasses(currentSubMenu, opts.classSubMenuIn);
 
         currentSubMenu.addEventListener(animationEnd, function () {
+            addClasses(this, opts.classSubMenuHidden);
             removeClasses(this, opts.classSubMenuShown);
             removeClasses(this, opts.classSubMenuOut);
 
