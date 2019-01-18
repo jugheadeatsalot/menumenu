@@ -89,6 +89,12 @@ function merge(object1, object2) {
     return object1;
 }
 
+function off(element, events, listener, options) {
+    events.split(' ').forEach(function (event) {
+        element.removeEventListener(event, listener, options);
+    });
+}
+
 function on(element, events, listener, options) {
     events.split(' ').forEach(function (event) {
         element.addEventListener(event, listener, options);
@@ -118,6 +124,7 @@ function menumenu(selector, opts) {
         classHasChildren: 'has-children',
         classMenuHidden: 'menu-hidden',
         classSubMenu: 'sub-menu',
+        closeOnOutsideClick: true,
         idMenu: 'menumenu',
         msgBack: 'Back'
     };
@@ -230,29 +237,61 @@ function menumenu(selector, opts) {
         addClasses(menu, opts.classMenuHidden);
         removeClasses(menu, opts.classMenuIn);
 
+        if (opts.closeOnOutsideClick) handleDocumentClicks(menu);
+
         if (typeof callback === 'function') callback.call(_this);
     };
 
     var showSubMenu = function showSubMenu(targetSubMenu) {
         addClasses(targetSubMenu, opts.classSubMenuIn);
 
-        on(targetSubMenu, animationEnd, function () {
+        var listener = function listener(targetSubMenu, event) {
+            off(targetSubMenu, event.type, showSubMenuAnimationEnd);
+
             removeClasses(targetSubMenu, opts.classSubMenuHidden);
             addClasses(targetSubMenu, opts.classSubMenuShown);
-        }, { once: true });
+        };
+
+        var showSubMenuAnimationEnd = listener.bind(targetSubMenu, targetSubMenu);
+
+        on(targetSubMenu, animationEnd, showSubMenuAnimationEnd);
     };
 
     var hideSubMenu = function hideSubMenu(currentSubMenu, callback, _this) {
         addClasses(currentSubMenu, opts.classSubMenuOut);
         removeClasses(currentSubMenu, opts.classSubMenuIn);
 
-        on(currentSubMenu, animationEnd, function () {
+        var listener = function listener(currentSubMenu, callback, _this, event) {
+            off(currentSubMenu, event.type, hideSubMenuAnimationEnd);
+
             addClasses(currentSubMenu, opts.classSubMenuHidden);
             removeClasses(currentSubMenu, opts.classSubMenuShown);
             removeClasses(currentSubMenu, opts.classSubMenuOut);
 
             if (typeof callback === 'function') callback.call(_this);
-        }, { once: true });
+        };
+
+        var hideSubMenuAnimationEnd = listener.bind(currentSubMenu, currentSubMenu, callback, _this);
+
+        on(currentSubMenu, animationEnd, hideSubMenuAnimationEnd);
+    };
+
+    var handleDocumentClicks = function handleDocumentClicks(container) {
+        var listener = function listener(event) {
+            if (!container.contains(event.target)) {
+                var currentSubMenu = container.querySelector('.' + opts.classSubMenuShown);
+
+                if (currentSubMenu) {
+                    console.log('HIT!');
+
+                    off(document, 'click', listener);
+
+                    hideSubMenu(currentSubMenu, showMenu);
+                }
+            }
+        };
+
+        on(document, 'click', listener);
     };
 }
 

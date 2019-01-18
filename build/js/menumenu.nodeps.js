@@ -17,6 +17,7 @@ var menumenu = (function (_d) {
             classHasChildren: 'has-children',
             classMenuHidden: 'menu-hidden',
             classSubMenu: 'sub-menu',
+            closeOnOutsideClick: true,
             idMenu: 'menumenu',
             msgBack: 'Back'
         };
@@ -129,29 +130,61 @@ var menumenu = (function (_d) {
             _d.addClasses(menu, opts.classMenuHidden);
             _d.removeClasses(menu, opts.classMenuIn);
 
+            if (opts.closeOnOutsideClick) handleDocumentClicks(menu);
+
             if (typeof callback === 'function') callback.call(_this);
         };
 
         var showSubMenu = function showSubMenu(targetSubMenu) {
             _d.addClasses(targetSubMenu, opts.classSubMenuIn);
 
-            _d.on(targetSubMenu, animationEnd, function () {
+            var listener = function listener(targetSubMenu, event) {
+                _d.off(targetSubMenu, event.type, showSubMenuAnimationEnd);
+
                 _d.removeClasses(targetSubMenu, opts.classSubMenuHidden);
                 _d.addClasses(targetSubMenu, opts.classSubMenuShown);
-            }, { once: true });
+            };
+
+            var showSubMenuAnimationEnd = listener.bind(targetSubMenu, targetSubMenu);
+
+            _d.on(targetSubMenu, animationEnd, showSubMenuAnimationEnd);
         };
 
         var hideSubMenu = function hideSubMenu(currentSubMenu, callback, _this) {
             _d.addClasses(currentSubMenu, opts.classSubMenuOut);
             _d.removeClasses(currentSubMenu, opts.classSubMenuIn);
 
-            _d.on(currentSubMenu, animationEnd, function () {
+            var listener = function listener(currentSubMenu, callback, _this, event) {
+                _d.off(currentSubMenu, event.type, hideSubMenuAnimationEnd);
+
                 _d.addClasses(currentSubMenu, opts.classSubMenuHidden);
                 _d.removeClasses(currentSubMenu, opts.classSubMenuShown);
                 _d.removeClasses(currentSubMenu, opts.classSubMenuOut);
 
                 if (typeof callback === 'function') callback.call(_this);
-            }, { once: true });
+            };
+
+            var hideSubMenuAnimationEnd = listener.bind(currentSubMenu, currentSubMenu, callback, _this);
+
+            _d.on(currentSubMenu, animationEnd, hideSubMenuAnimationEnd);
+        };
+
+        var handleDocumentClicks = function handleDocumentClicks(container) {
+            var listener = function listener(event) {
+                if (!container.contains(event.target)) {
+                    var currentSubMenu = container.querySelector('.' + opts.classSubMenuShown);
+
+                    if (currentSubMenu) {
+                        console.log('HIT!');
+
+                        _d.off(document, 'click', listener);
+
+                        hideSubMenu(currentSubMenu, showMenu);
+                    }
+                }
+            };
+
+            _d.on(document, 'click', listener);
         };
     }
 

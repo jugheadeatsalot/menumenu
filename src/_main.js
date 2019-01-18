@@ -16,6 +16,7 @@ function menumenu(selector, opts) {
         classHasChildren: 'has-children',
         classMenuHidden: 'menu-hidden',
         classSubMenu: 'sub-menu',
+        closeOnOutsideClick: true,
         idMenu: 'menumenu',
         msgBack: 'Back',
     };
@@ -37,7 +38,7 @@ function menumenu(selector, opts) {
         if(!menuItem.id) menuItem.id = `${menu.id}-item-${index + 1}`;
     });
 
-    _d.forEach(subMenus, subMenu => {
+    _d.forEach(subMenus, (subMenu) => {
         _d.addClasses(subMenu, `${opts.classSubMenu} ${opts.classSubMenuHidden}`);
 
         if(opts.addDropdownToggle) {
@@ -65,14 +66,14 @@ function menumenu(selector, opts) {
 
     const dropdownToggles = menu.querySelectorAll(`.${opts.classDropdownToggle}`);
 
-    _d.forEach(dropdownToggles, dropdownToggle => {
+    _d.forEach(dropdownToggles, (dropdownToggle) => {
         dropdownToggle.dataset.id = _d.getClosest(dropdownToggle, 'li').id;
         dropdownToggle.dataset.depth = _d.getParents(dropdownToggle, 'li > ul').length;
 
         const targetSubMenuSelector = `ul[data-id="${dropdownToggle.dataset.id}"]`;
         const targetSubMenu = menu.querySelector(targetSubMenuSelector);
 
-        _d.on(dropdownToggle, 'click', event => {
+        _d.on(dropdownToggle, 'click', (event) => {
             event.preventDefault();
 
             const currentSubMenu = menu.querySelector(`.${opts.classSubMenuShown}`);
@@ -97,12 +98,12 @@ function menumenu(selector, opts) {
 
     const backLinks = menu.querySelectorAll(`.${opts.classBackLink}`);
 
-    _d.forEach(backLinks, backLink => {
+    _d.forEach(backLinks, (backLink) => {
         const grandparent = _d.getParents(backLink, `#${menu.id} li`)[1];
 
         backLink.dataset.id = (grandparent) ? grandparent.id : 'none';
 
-        _d.on(backLink, 'click', event => {
+        _d.on(backLink, 'click', (event) => {
             event.preventDefault();
 
             const currentSubMenu = menu.querySelector(`.${opts.classSubMenuShown}`);
@@ -131,29 +132,66 @@ function menumenu(selector, opts) {
         _d.addClasses(menu, opts.classMenuHidden);
         _d.removeClasses(menu, opts.classMenuIn);
 
+        if(opts.closeOnOutsideClick) handleDocumentClicks(menu);
+
         if(typeof callback === 'function') callback.call(_this);
     };
 
     const showSubMenu = (targetSubMenu) => {
         _d.addClasses(targetSubMenu, opts.classSubMenuIn);
 
-        _d.on(targetSubMenu, animationEnd, () => {
+        const listener = (targetSubMenu, event) => {
+            _d.off(targetSubMenu, event.type, showSubMenuAnimationEnd);
+
             _d.removeClasses(targetSubMenu, opts.classSubMenuHidden);
             _d.addClasses(targetSubMenu, opts.classSubMenuShown);
-        }, {once: true});
+        };
+
+        const showSubMenuAnimationEnd = listener.bind(targetSubMenu, targetSubMenu);
+
+        _d.on(targetSubMenu, animationEnd, showSubMenuAnimationEnd);
     };
 
     const hideSubMenu = (currentSubMenu, callback, _this) => {
         _d.addClasses(currentSubMenu, opts.classSubMenuOut);
         _d.removeClasses(currentSubMenu, opts.classSubMenuIn);
 
-        _d.on(currentSubMenu, animationEnd, () => {
+        const listener = (currentSubMenu, callback, _this, event) => {
+            _d.off(currentSubMenu, event.type, hideSubMenuAnimationEnd);
+
             _d.addClasses(currentSubMenu, opts.classSubMenuHidden);
             _d.removeClasses(currentSubMenu, opts.classSubMenuShown);
             _d.removeClasses(currentSubMenu, opts.classSubMenuOut);
 
             if(typeof callback === 'function') callback.call(_this);
-        }, {once: true});
+        };
+
+        const hideSubMenuAnimationEnd = listener.bind(
+            currentSubMenu,
+            currentSubMenu,
+            callback,
+            _this,
+        );
+
+        _d.on(currentSubMenu, animationEnd, hideSubMenuAnimationEnd);
+    };
+
+    const handleDocumentClicks = (container) => {
+        const listener = event => {
+            if(!container.contains(event.target)) {
+                const currentSubMenu = container.querySelector(`.${opts.classSubMenuShown}`);
+
+                if(currentSubMenu) {
+                    console.log('HIT!');
+
+                    _d.off(document, 'click', listener);
+
+                    hideSubMenu(currentSubMenu, showMenu);
+                }
+            }
+        };
+
+        _d.on(document, 'click', listener);
     };
 }
 

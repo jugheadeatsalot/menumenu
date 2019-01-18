@@ -11,14 +11,12 @@
     }
 }
 
-$hidden-offset:6000px;
+$hidden-offset:9999px;
 $sub-menu-in:'.sub-menu-in';
 $sub-menu-out:'.sub-menu-out';
 
 .menumenu {
     @include ul-styles();
-
-    display:flex;
 
     ul {
         @include ul-styles();
@@ -67,7 +65,6 @@ $sub-menu-out:'.sub-menu-out';
 }
 
 $y-offset:10px;
-$scale:1.05;
 
 @keyframes SubMenuIn {
     0% {

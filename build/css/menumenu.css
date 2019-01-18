@@ -9,8 +9,6 @@
 
 .menumenu {
   list-style-type: none;
-  display: -ms-flexbox;
-  display: flex;
 }
 
 .menumenu ul {
@@ -32,7 +30,7 @@
 }
 
 .menumenu > li > ul {
-  left: -6000px;
+  left: -9999px;
 }
 
 .menumenu > li > ul.sub-menu-in, .menumenu > li > ul.sub-menu-out {
@@ -41,12 +39,12 @@
 
 .menumenu .sub-menu-in,
 .menumenu .sub-menu-out {
-  left: 6000px;
+  left: 9999px;
 }
 
 .menumenu .sub-menu-in ul,
 .menumenu .sub-menu-out ul {
-  left: -6000px;
+  left: -9999px;
 }
 
 .menumenu .sub-menu-in {

@@ -3,47 +3,8 @@ body {
   padding: 40px;
 }
 
-.menumenu {
-  padding-left: 0;
-}
-
-.menumenu ul {
-  background: #ffffff;
-  border-radius: .4em;
-  padding: 14px;
-  box-shadow: 0 2px 14px 0 rgba(0, 0, 0, 0.5);
-}
-
-.menumenu ul:before {
-  content: '';
-  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.3);
-  position: absolute;
-  top: -5px;
-  left: 28px;
-  width: 10px;
-  height: 10px;
-  background-color: #ffffff;
-  transform: rotate(45deg);
-}
-
-.menumenu ul:after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 15px;
-  width: 30px;
-  height: 10px;
-  background-color: #ffffff;
-}
-
-.menumenu > li:not(:last-child) {
-  margin-right: 14px;
-}
-
-.menumenu > li > ul {
+ul > li > ul {
   display: none;
-  margin-top: 12px;
-  margin-left: -14px;
 }
 
 /*# sourceMappingURL=sourcemaps/style.css.map */
