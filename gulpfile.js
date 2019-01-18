@@ -10,8 +10,6 @@ const cleanCSS = require('gulp-clean-css');
 const sassIn = 'scss/**/*.scss';
 const sassOut = 'build/css';
 
-const {uglify} = require('rollup-plugin-uglify');
-
 gulp.task('sequence', () => runSequence('sass'));
 
 const sassOpts = {
@@ -37,8 +35,6 @@ gulp.task('watch', () => {
     const note = event => {
         console.log('File ' + event.path + ' was ' + event.type + ', running tasks...');
     };
-
-    console.log(uglify);
 
     gulp.watch([sassIn], ['sass']).on('change', note);
 });

@@ -1,6 +1,22 @@
 var menumenu = (function () {
     'use strict';
 
+    if (!Element.prototype.matches) {
+        Element.prototype.matches = Element.prototype.msMatchesSelector || Element.prototype.webkitMatchesSelector;
+    }
+
+    if (!Element.prototype.closest) {
+        Element.prototype.closest = function (s) {
+            var el = this;
+
+            do {
+                if (el.matches(s)) return el;
+                el = el.parentElement || el.parentNode;
+            } while (el !== null && el.nodeType === 1);
+            return null;
+        };
+    }
+
     function addClasses(element, classes) {
         var elClasses = element.className.trim();
         var elClassesArray = elClasses ? elClasses.split(' ') : [];
@@ -42,18 +58,6 @@ var menumenu = (function () {
         }
     }
 
-    function getClosest(element, filter) {
-        if (typeof filter === 'undefined') filter = '*';
-
-        var closest = element.parentNode;
-
-        while (!matches(closest, filter)) {
-            closest = closest.parentNode;
-        }
-
-        return closest;
-    }
-
     function getParents(element, filter) {
         if (typeof filter === 'undefined') filter = '*';
 
@@ -62,7 +66,7 @@ var menumenu = (function () {
         var parent = element.parentNode;
 
         while (parent !== document) {
-            if (matches(parent, filter)) parents.push(parent);
+            if (parent.matches(filter)) parents.push(parent);
 
             parent = parent.parentNode;
         }
@@ -70,16 +74,8 @@ var menumenu = (function () {
         return parents;
     }
 
-    function matches(element, selector) {
-        if (Element.prototype.matches) return element.matches(selector);
-
-        var matches = document.querySelectorAll(selector);
-
-        var i = matches.length;
-
-        while (--i >= 0 && matches.item(i) !== element) {}
-
-        return i > -1;
+    function isVisible(element) {
+        return !!element && !!(element.offsetWidth || element.offsetHeight || element.getClientRects().length);
     }
 
     function merge(object1, object2) {
@@ -109,8 +105,7 @@ var menumenu = (function () {
         element.className = differ(elClassesArray, classes.trim().split(' ')).join(' ');
     }
 
-    function menumenu(selector, opts) {
-        var menu = document.querySelector(selector);
+    function menumenu(menu, opts) {
         var menuItems = menu.querySelectorAll('li');
         var subMenus = menu.querySelectorAll('li > ul');
         var animationEnd = animationEndEvent();
@@ -120,11 +115,7 @@ var menumenu = (function () {
         var defaults = {
             addBackLink: true,
             addDropdownToggle: true,
-            classBackLink: 'back-link',
             classDropdownToggle: 'dropdown-toggle',
-            classHasChildren: 'has-children',
-            classMenuHidden: 'menu-hidden',
-            classSubMenu: 'sub-menu',
             closeOnOutsideClick: true,
             idMenu: 'menumenu',
             msgBack: 'Back'
@@ -132,12 +123,16 @@ var menumenu = (function () {
 
         opts = merge(defaults, opts);
 
-        opts.classMenuIn = 'menu-in';
-        opts.classMenuOut = 'menu-out';
-        opts.classSubMenuIn = 'sub-menu-in';
-        opts.classSubMenuOut = 'sub-menu-out';
-        opts.classSubMenuHidden = 'sub-menu-hidden';
-        opts.classSubMenuShown = 'sub-menu-shown';
+        var classBackLink = 'back-link';
+        var classHasChildren = 'has-children';
+        var classMenuHidden = 'menu-hidden';
+        var classMenuIn = 'menu-in';
+        var classMenuOut = 'menu-out';
+        var classSubMenu = 'sub-menu';
+        var classSubMenuIn = 'sub-menu-in';
+        var classSubMenuOut = 'sub-menu-out';
+        var classSubMenuHidden = 'sub-menu-hidden';
+        var classSubMenuShown = 'sub-menu-shown';
 
         if (!menu.id) menu.id = opts.idMenu;
 
@@ -148,25 +143,25 @@ var menumenu = (function () {
         });
 
         forEach(subMenus, function (subMenu) {
-            addClasses(subMenu, opts.classSubMenu + ' ' + opts.classSubMenuHidden);
+            addClasses(subMenu, classSubMenu + ' ' + classSubMenuHidden);
 
             if (opts.addDropdownToggle) {
-                var dropdownToggleHTML = '<span class="' + opts.classDropdownToggle + ' generated"></span>';
+                var dropdownToggleHTML = '<span class="' + opts.classDropdownToggle + ' generated-toggle"></span>';
 
                 subMenu.insertAdjacentHTML('beforebegin', dropdownToggleHTML);
             }
 
             if (opts.addBackLink) {
-                var backLinkHTML = '<li class="' + opts.classBackLink + '"><a href="#">' + opts.msgBack + '</a></li>';
+                var backLinkHTML = '<li class="' + classBackLink + '"><a href="#">' + opts.msgBack + '</a></li>';
 
                 subMenu.insertAdjacentHTML('afterbegin', backLinkHTML);
             }
 
-            var parent = getClosest(subMenu, 'li');
+            var parent = subMenu.closest('li');
 
             subMenu.dataset.id = parent.id;
 
-            addClasses(parent, opts.classHasChildren);
+            addClasses(parent, classHasChildren);
         });
 
         var backLinkClicked = false;
@@ -174,7 +169,7 @@ var menumenu = (function () {
         var dropdownToggles = menu.querySelectorAll('.' + opts.classDropdownToggle);
 
         forEach(dropdownToggles, function (dropdownToggle) {
-            dropdownToggle.dataset.id = getClosest(dropdownToggle, 'li').id;
+            dropdownToggle.dataset.id = dropdownToggle.closest('li').id;
             dropdownToggle.dataset.depth = getParents(dropdownToggle, 'li > ul').length;
 
             var targetSubMenuSelector = 'ul[data-id="' + dropdownToggle.dataset.id + '"]';
@@ -183,7 +178,7 @@ var menumenu = (function () {
             on(dropdownToggle, 'click', function (event) {
                 event.preventDefault();
 
-                var currentSubMenu = menu.querySelector('.' + opts.classSubMenuShown);
+                var currentSubMenu = menu.querySelector('.' + classSubMenuShown);
 
                 if (currentSubMenu) {
                     if (dropdownToggle.dataset.depth === '0' && backLinkClicked === false) {
@@ -203,7 +198,7 @@ var menumenu = (function () {
             });
         });
 
-        var backLinks = menu.querySelectorAll('.' + opts.classBackLink);
+        var backLinks = menu.querySelectorAll('.' + classBackLink);
 
         forEach(backLinks, function (backLink) {
             var grandparent = getParents(backLink, '#' + menu.id + ' li')[1];
@@ -213,7 +208,7 @@ var menumenu = (function () {
             on(backLink, 'click', function (event) {
                 event.preventDefault();
 
-                var currentSubMenu = menu.querySelector('.' + opts.classSubMenuShown);
+                var currentSubMenu = menu.querySelector('.' + classSubMenuShown);
 
                 if (backLink.dataset.id === 'none') {
                     hideSubMenu(currentSubMenu, showMenu);
@@ -228,15 +223,15 @@ var menumenu = (function () {
         });
 
         var showMenu = function showMenu() {
-            addClasses(menu, opts.classMenuIn);
-            removeClasses(menu, opts.classMenuHidden);
-            removeClasses(menu, opts.classMenuOut);
+            addClasses(menu, classMenuIn);
+            removeClasses(menu, classMenuHidden);
+            removeClasses(menu, classMenuOut);
         };
 
         var hideMenu = function hideMenu(callback, _this) {
-            addClasses(menu, opts.classMenuOut);
-            addClasses(menu, opts.classMenuHidden);
-            removeClasses(menu, opts.classMenuIn);
+            addClasses(menu, classMenuOut);
+            addClasses(menu, classMenuHidden);
+            removeClasses(menu, classMenuIn);
 
             if (opts.closeOnOutsideClick) handleDocumentClicks(menu);
 
@@ -244,13 +239,13 @@ var menumenu = (function () {
         };
 
         var showSubMenu = function showSubMenu(targetSubMenu) {
-            addClasses(targetSubMenu, opts.classSubMenuIn);
+            addClasses(targetSubMenu, classSubMenuIn);
 
             var listener = function listener(targetSubMenu, event) {
                 off(targetSubMenu, event.type, showSubMenuAnimationEnd);
 
-                removeClasses(targetSubMenu, opts.classSubMenuHidden);
-                addClasses(targetSubMenu, opts.classSubMenuShown);
+                removeClasses(targetSubMenu, classSubMenuHidden);
+                addClasses(targetSubMenu, classSubMenuShown);
             };
 
             var showSubMenuAnimationEnd = listener.bind(targetSubMenu, targetSubMenu);
@@ -259,15 +254,15 @@ var menumenu = (function () {
         };
 
         var hideSubMenu = function hideSubMenu(currentSubMenu, callback, _this) {
-            addClasses(currentSubMenu, opts.classSubMenuOut);
-            removeClasses(currentSubMenu, opts.classSubMenuIn);
+            addClasses(currentSubMenu, classSubMenuOut);
+            removeClasses(currentSubMenu, classSubMenuIn);
 
             var listener = function listener(currentSubMenu, callback, _this, event) {
                 off(currentSubMenu, event.type, hideSubMenuAnimationEnd);
 
-                addClasses(currentSubMenu, opts.classSubMenuHidden);
-                removeClasses(currentSubMenu, opts.classSubMenuShown);
-                removeClasses(currentSubMenu, opts.classSubMenuOut);
+                addClasses(currentSubMenu, classSubMenuHidden);
+                removeClasses(currentSubMenu, classSubMenuShown);
+                removeClasses(currentSubMenu, classSubMenuOut);
 
                 if (typeof callback === 'function') callback.call(_this);
             };
@@ -279,12 +274,10 @@ var menumenu = (function () {
 
         var handleDocumentClicks = function handleDocumentClicks(container) {
             var listener = function listener(event) {
-                if (!container.contains(event.target)) {
-                    var currentSubMenu = container.querySelector('.' + opts.classSubMenuShown);
+                if (!event.target.closest('.' + classHasChildren)) {
+                    var currentSubMenu = container.querySelector('.' + classSubMenuShown);
 
-                    if (currentSubMenu) {
-                        console.log('HIT!');
-
+                    if (isVisible(currentSubMenu)) {
                         off(document, 'click', listener);
 
                         hideSubMenu(currentSubMenu, showMenu);

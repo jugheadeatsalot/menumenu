@@ -1,12 +1,3 @@
-.dropdown-toggle {
-  cursor: pointer;
-}
-
-.dropdown-toggle.generated:before {
-  content: '\21d3';
-  font-size: .8em;
-}
-
 .menumenu {
   list-style-type: none;
 }
@@ -35,6 +26,15 @@
 
 .menumenu > li > ul.sub-menu-in, .menumenu > li > ul.sub-menu-out {
   left: 0;
+}
+
+.menumenu .generated-toggle {
+  cursor: pointer;
+}
+
+.menumenu .generated-toggle:before {
+  content: '\21d3';
+  font-size: .8em;
 }
 
 .menumenu .sub-menu-in,
