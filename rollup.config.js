@@ -78,7 +78,7 @@ export default [
             format: 'cjs',
         },
         plugins: [
-            babel({exclude: 'node_modules/**'}),
+            babel({exclude: 'node_modules/!(dominoob)/**/*'}),
             resolve(),
         ],
         watch: {
