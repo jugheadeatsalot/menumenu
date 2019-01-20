@@ -1,6 +1,7 @@
 body {
   margin: 0;
   padding: 40px;
+  overflow-y: scroll;
 }
 
 ul > li > ul {
