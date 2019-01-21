@@ -19,6 +19,7 @@ var menumenu = (function (_d) {
 
         opts = _d.merge(defaults, opts);
 
+        var classActive = 'current-menumenu';
         var classBackLink = 'back-link';
         var classHasChildren = 'has-children';
         var classMenuHidden = 'menu-hidden';
@@ -87,7 +88,7 @@ var menumenu = (function (_d) {
                 } else {
                     hideMenu(function () {
                         showSubMenu(targetSubMenu);
-                    });
+                    }, dropdownToggle.closest('.has-children'));
                 }
 
                 backLinkClicked = false; // Reset. Seems obvious, but I'm stupid.
@@ -119,19 +120,37 @@ var menumenu = (function (_d) {
         });
 
         var showMenu = function showMenu() {
+            if (opts.closeOnOutsideClick) _d.off(document, 'click', handleDocumentClicksListener);
+
+            var active = menu.querySelector('.' + classActive);
+
+            if (active) _d.removeClasses(menu.querySelector('.' + classActive), classActive);
+
             _d.addClasses(menu, classMenuIn);
             _d.removeClasses(menu, classMenuHidden);
             _d.removeClasses(menu, classMenuOut);
         };
 
-        var hideMenu = function hideMenu(callback, _this) {
+        var hideMenu = function hideMenu(callback, toggleParent) {
+            _d.addClasses(toggleParent, classActive);
             _d.addClasses(menu, classMenuOut);
-            _d.addClasses(menu, classMenuHidden);
             _d.removeClasses(menu, classMenuIn);
 
-            if (opts.closeOnOutsideClick) handleDocumentClicks(menu);
+            var listener = function listener(menu, callback, event) {
+                console.log(event.animationName);
 
-            if (typeof callback === 'function') callback.call(_this);
+                _d.off(menu, event.type, hideMenuAnimationEnd);
+
+                _d.addClasses(menu, classMenuHidden);
+
+                if (opts.closeOnOutsideClick) handleDocumentClicks();
+
+                if (typeof callback === 'function') callback();
+            };
+
+            var hideMenuAnimationEnd = listener.bind(menu, menu, callback);
+
+            _d.on(menu, animationEnd, hideMenuAnimationEnd);
         };
 
         var showSubMenu = function showSubMenu(targetSubMenu) {
@@ -149,39 +168,37 @@ var menumenu = (function (_d) {
             _d.on(targetSubMenu, animationEnd, showSubMenuAnimationEnd);
         };
 
-        var hideSubMenu = function hideSubMenu(currentSubMenu, callback, _this) {
+        var hideSubMenu = function hideSubMenu(currentSubMenu, callback) {
             _d.addClasses(currentSubMenu, classSubMenuOut);
             _d.removeClasses(currentSubMenu, classSubMenuIn);
 
-            var listener = function listener(currentSubMenu, callback, _this, event) {
+            var listener = function listener(currentSubMenu, callback, event) {
                 _d.off(currentSubMenu, event.type, hideSubMenuAnimationEnd);
 
                 _d.addClasses(currentSubMenu, classSubMenuHidden);
                 _d.removeClasses(currentSubMenu, classSubMenuShown);
                 _d.removeClasses(currentSubMenu, classSubMenuOut);
 
-                if (typeof callback === 'function') callback.call(_this);
+                if (typeof callback === 'function') callback();
             };
 
-            var hideSubMenuAnimationEnd = listener.bind(currentSubMenu, currentSubMenu, callback, _this);
+            var hideSubMenuAnimationEnd = listener.bind(currentSubMenu, currentSubMenu, callback);
 
             _d.on(currentSubMenu, animationEnd, hideSubMenuAnimationEnd);
         };
 
-        var handleDocumentClicks = function handleDocumentClicks(container) {
-            var listener = function listener(event) {
-                if (!event.target.closest('.' + classHasChildren)) {
-                    var currentSubMenu = container.querySelector('.' + classSubMenuShown);
+        var handleDocumentClicksListener = function handleDocumentClicksListener(event) {
+            if (!event.target.closest('.' + classHasChildren)) {
+                var currentSubMenu = menu.querySelector('.' + classSubMenuShown);
 
-                    if (_d.isVisible(currentSubMenu)) {
-                        _d.off(document, 'click', listener);
-
-                        hideSubMenu(currentSubMenu, showMenu);
-                    }
+                if (_d.isVisible(currentSubMenu)) {
+                    hideSubMenu(currentSubMenu, showMenu);
                 }
-            };
+            }
+        };
 
-            _d.on(document, 'click', listener);
+        var handleDocumentClicks = function handleDocumentClicks() {
+            _d.on(document, 'click', handleDocumentClicksListener);
         };
     }
 

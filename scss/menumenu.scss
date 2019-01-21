@@ -3,6 +3,8 @@
 }
 
 $hidden-offset:9999px;
+$menu-in:'.menu-in';
+$menu-out:'.menu-out';
 $sub-menu-in:'.sub-menu-in';
 $sub-menu-out:'.sub-menu-out';
 
@@ -61,6 +63,30 @@ $sub-menu-out:'.sub-menu-out';
 
     #{$sub-menu-out} {
         animation:SubMenuOut .4s cubic-bezier(0.77, 0, 0.175, 1);
+    }
+}
+
+#{$menu-in} {
+    animation:MenuIn 0s;
+}
+
+#{$menu-out} {
+    animation:MenuOut 0s;
+}
+
+@keyframes MenuIn {
+    0% {
+    }
+
+    100% {
+    }
+}
+
+@keyframes MenuOut {
+    0% {
+    }
+
+    100% {
     }
 }
 

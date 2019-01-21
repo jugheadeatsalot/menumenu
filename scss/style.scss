@@ -2,12 +2,13 @@ body {
     margin:0;
     padding:40px;
     overflow-y:scroll;
-}
 
-ul {
-    > li {
-        > ul {
-            display:none;
+    > ul {
+        > li {
+            > ul {
+                display:none;
+            }
         }
     }
 }
+
