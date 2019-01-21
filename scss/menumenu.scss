@@ -13,25 +13,23 @@ $sub-menu-out:'.sub-menu-out';
         @include ul-styles();
 
         display:block !important;
-        left:0;
         position:absolute;
-        top:100%;
+        top:0;
+        left:0;
         z-index:9999;
         width:240px;
-
-        ul {
-            top:0;
-        }
     }
 
     > li {
         position:relative;
 
         > ul {
+            top:-$hidden-offset;
             left:-$hidden-offset;
 
             &#{$sub-menu-in},
             &#{$sub-menu-out} {
+                top:0;
                 left:0;
             }
         }
@@ -48,9 +46,11 @@ $sub-menu-out:'.sub-menu-out';
 
     #{$sub-menu-in},
     #{$sub-menu-out} {
+        top:$hidden-offset;
         left:$hidden-offset;
 
         ul {
+            top:-$hidden-offset;
             left:-$hidden-offset;
         }
     }

@@ -5,15 +5,11 @@
 .menumenu ul {
   list-style-type: none;
   display: block !important;
-  left: 0;
   position: absolute;
-  top: 100%;
+  top: 0;
+  left: 0;
   z-index: 9999;
   width: 240px;
-}
-
-.menumenu ul ul {
-  top: 0;
 }
 
 .menumenu > li {
@@ -21,10 +17,12 @@
 }
 
 .menumenu > li > ul {
+  top: -9999px;
   left: -9999px;
 }
 
 .menumenu > li > ul.sub-menu-in, .menumenu > li > ul.sub-menu-out {
+  top: 0;
   left: 0;
 }
 
@@ -39,11 +37,13 @@
 
 .menumenu .sub-menu-in,
 .menumenu .sub-menu-out {
+  top: 9999px;
   left: 9999px;
 }
 
 .menumenu .sub-menu-in ul,
 .menumenu .sub-menu-out ul {
+  top: -9999px;
   left: -9999px;
 }
 
