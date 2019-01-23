@@ -137,8 +137,6 @@ var menumenu = (function (_d) {
             _d.removeClasses(menu, classMenuIn);
 
             var listener = function listener(menu, callback, event) {
-                console.log(event.animationName);
-
                 _d.off(menu, event.type, hideMenuAnimationEnd);
 
                 _d.addClasses(menu, classMenuHidden);

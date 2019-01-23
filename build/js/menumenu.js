@@ -241,8 +241,6 @@ var menumenu = (function () {
             removeClasses(menu, classMenuIn);
 
             var listener = function listener(menu, callback, event) {
-                console.log(event.animationName);
-
                 off(menu, event.type, hideMenuAnimationEnd);
 
                 addClasses(menu, classMenuHidden);
