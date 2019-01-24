@@ -33,7 +33,7 @@ function menumenu(menu, opts) {
     if(!menu.id) menu.id = opts.idMenu;
 
     _d.addClasses(menu, 'menumenu');
- 
+
     _d.forEach(menuItems, (menuItem, index) => {
         if(!menuItem.id) menuItem.id = `${menu.id}-item-${index + 1}`;
     });
@@ -57,7 +57,7 @@ function menumenu(menu, opts) {
 
         const parent = subMenu.closest('li');
 
-        subMenu.dataset.id = parent.id;
+        subMenu.setAttribute('data-id', parent.id);
 
         _d.addClasses(parent, classHasChildren);
     });
@@ -67,10 +67,10 @@ function menumenu(menu, opts) {
     const dropdownToggles = menu.querySelectorAll(`.${opts.classDropdownToggle}`);
 
     _d.forEach(dropdownToggles, (dropdownToggle) => {
-        dropdownToggle.dataset.id = dropdownToggle.closest('li').id;
-        dropdownToggle.dataset.depth = _d.getParents(dropdownToggle, 'li > ul').length;
+        dropdownToggle.setAttribute('data-id', dropdownToggle.closest('li').id);
+        dropdownToggle.setAttribute('data-depth', _d.getParents(dropdownToggle, 'li > ul').length);
 
-        const targetSubMenuSelector = `ul[data-id="${dropdownToggle.dataset.id}"]`;
+        const targetSubMenuSelector = `ul[data-id="${dropdownToggle.getAttribute('data-id')}"]`;
         const targetSubMenu = menu.querySelector(targetSubMenuSelector);
 
         _d.on(dropdownToggle, 'click', (event) => {
@@ -79,7 +79,7 @@ function menumenu(menu, opts) {
             const currentSubMenu = menu.querySelector(`.${classSubMenuShown}`);
 
             if(currentSubMenu) {
-                if(dropdownToggle.dataset.depth === '0' && backLinkClicked === false) {
+                if(dropdownToggle.getAttribute('data-depth') === '0' && backLinkClicked === false) {
                     hideSubMenu(currentSubMenu, showMenu);
                 } else {
                     hideSubMenu(currentSubMenu, () => {
@@ -101,18 +101,18 @@ function menumenu(menu, opts) {
     _d.forEach(backLinks, (backLink) => {
         const grandparent = _d.getParents(backLink, `#${menu.id} li`)[1];
 
-        backLink.dataset.id = (grandparent) ? grandparent.id : 'none';
+        backLink.setAttribute('data-id', (grandparent) ? grandparent.id : 'none');
 
         _d.on(backLink, 'click', (event) => {
             event.preventDefault();
 
             const currentSubMenu = menu.querySelector(`.${classSubMenuShown}`);
 
-            if(backLink.dataset.id === 'none') {
+            if(backLink.getAttribute('data-id') === 'none') {
                 hideSubMenu(currentSubMenu, showMenu);
             } else {
                 const targetDropdownToggleSelector =
-                    `.${opts.classDropdownToggle}[data-id="${backLink.dataset.id}"]`;
+                    `.${opts.classDropdownToggle}[data-id="${backLink.getAttribute('data-id')}"]`;
 
                 backLinkClicked = true;
 

@@ -47,7 +47,7 @@ function dedupe(array) {
 
 function differ(haystack, needles) {
     return haystack.filter(function (value) {
-        return !needles.includes(value);
+        return needles.indexOf(value) < 0;
     });
 }
 
@@ -159,7 +159,7 @@ function menumenu(menu, opts) {
 
         var parent = subMenu.closest('li');
 
-        subMenu.dataset.id = parent.id;
+        subMenu.setAttribute('data-id', parent.id);
 
         addClasses(parent, classHasChildren);
     });
@@ -169,10 +169,10 @@ function menumenu(menu, opts) {
     var dropdownToggles = menu.querySelectorAll('.' + opts.classDropdownToggle);
 
     forEach(dropdownToggles, function (dropdownToggle) {
-        dropdownToggle.dataset.id = dropdownToggle.closest('li').id;
-        dropdownToggle.dataset.depth = getParents(dropdownToggle, 'li > ul').length;
+        dropdownToggle.setAttribute('data-id', dropdownToggle.closest('li').id);
+        dropdownToggle.setAttribute('data-depth', getParents(dropdownToggle, 'li > ul').length);
 
-        var targetSubMenuSelector = 'ul[data-id="' + dropdownToggle.dataset.id + '"]';
+        var targetSubMenuSelector = 'ul[data-id="' + dropdownToggle.getAttribute('data-id') + '"]';
         var targetSubMenu = menu.querySelector(targetSubMenuSelector);
 
         on(dropdownToggle, 'click', function (event) {
@@ -181,7 +181,7 @@ function menumenu(menu, opts) {
             var currentSubMenu = menu.querySelector('.' + classSubMenuShown);
 
             if (currentSubMenu) {
-                if (dropdownToggle.dataset.depth === '0' && backLinkClicked === false) {
+                if (dropdownToggle.getAttribute('data-depth') === '0' && backLinkClicked === false) {
                     hideSubMenu(currentSubMenu, showMenu);
                 } else {
                     hideSubMenu(currentSubMenu, function () {
@@ -203,17 +203,17 @@ function menumenu(menu, opts) {
     forEach(backLinks, function (backLink) {
         var grandparent = getParents(backLink, '#' + menu.id + ' li')[1];
 
-        backLink.dataset.id = grandparent ? grandparent.id : 'none';
+        backLink.setAttribute('data-id', grandparent ? grandparent.id : 'none');
 
         on(backLink, 'click', function (event) {
             event.preventDefault();
 
             var currentSubMenu = menu.querySelector('.' + classSubMenuShown);
 
-            if (backLink.dataset.id === 'none') {
+            if (backLink.getAttribute('data-id') === 'none') {
                 hideSubMenu(currentSubMenu, showMenu);
             } else {
-                var targetDropdownToggleSelector = '.' + opts.classDropdownToggle + '[data-id="' + backLink.dataset.id + '"]';
+                var targetDropdownToggleSelector = '.' + opts.classDropdownToggle + '[data-id="' + backLink.getAttribute('data-id') + '"]';
 
                 backLinkClicked = true;
 
