@@ -58,11 +58,11 @@ $sub-menu-out:'.sub-menu-out';
     }
 
     #{$sub-menu-in} {
-        animation:SubMenuIn .5s cubic-bezier(0.77, 0, 0.175, 1);
+        animation:SubMenuIn .4s;
     }
 
     #{$sub-menu-out} {
-        animation:SubMenuOut .4s cubic-bezier(0.77, 0, 0.175, 1);
+        animation:SubMenuOut .4s;
     }
 }
 
