@@ -146,13 +146,13 @@ function menumenu(menu, opts) {
         addClasses(subMenu, classSubMenu + ' ' + classSubMenuHidden);
 
         if (opts.addDropdownToggle) {
-            var dropdownToggleHTML = '<span class="' + opts.classDropdownToggle + ' generated-toggle"></span>';
+            var dropdownToggleHTML = '<span aria-hidden="true" class="' + opts.classDropdownToggle + ' generated"></span>';
 
             subMenu.insertAdjacentHTML('beforebegin', dropdownToggleHTML);
         }
 
         if (opts.addBackLink) {
-            var backLinkHTML = '<li class="' + classBackLink + '"><a href="#">' + opts.msgBack + '</a></li>';
+            var backLinkHTML = '<li aria-hidden="true" class="' + classBackLink + '"><a href="#">' + opts.msgBack + '</a></li>';
 
             subMenu.insertAdjacentHTML('afterbegin', backLinkHTML);
         }

@@ -43,14 +43,14 @@ function menumenu(menu, opts) {
 
         if(opts.addDropdownToggle) {
             const dropdownToggleHTML =
-                `<span class="${opts.classDropdownToggle} generated-toggle"></span>`;
+                `<span aria-hidden="true" class="${opts.classDropdownToggle} generated"></span>`;
 
             subMenu.insertAdjacentHTML('beforebegin', dropdownToggleHTML);
         }
 
         if(opts.addBackLink) {
             const backLinkHTML =
-                `<li class="${classBackLink}"><a href="#">${opts.msgBack}</a></li>`;
+                `<li aria-hidden="true" class="${classBackLink}"><a href="#">${opts.msgBack}</a></li>`;
 
             subMenu.insertAdjacentHTML('afterbegin', backLinkHTML);
         }
